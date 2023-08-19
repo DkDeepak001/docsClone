@@ -16,8 +16,8 @@ const Editor = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div ref={wrapperRef} className="w-3/4"></div>
+    <div className="flex flex-col items-center">
+      <div ref={wrapperRef} className="w-3/4 "></div>
     </div>
   );
 };

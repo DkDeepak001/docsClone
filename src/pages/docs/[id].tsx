@@ -9,11 +9,8 @@ const DynamicEditor = dynamic(() => import("~/components/editor"), {
 export default function Docs() {
   const { id } = useRouter().query;
   return (
-    <div>
-      Docs {id}
-      <div>
-        <DynamicEditor />{" "}
-      </div>{" "}
+    <div className="max-h-full min-h-screen bg-gray-50">
+      <DynamicEditor />
     </div>
   );
 }

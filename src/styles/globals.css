@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.ql-editor {
+  min-height: 11in;
+  width: 8in;
+  background-color: white;
+  padding: 20px;
+  margin: 2rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border: none;
+}
+.ql-container.ql-snow {
+  border: none;
+  display: flex;
+  justify-content: center;
+}
