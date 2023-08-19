@@ -1,5 +1,10 @@
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import Editor from "~/components/editor";
+
+const DynamicEditor = dynamic(() => import("~/components/editor"), {
+  loading: () => <p>Loading...</p>,
+  ssr: false,
+});
 
 export default function Docs() {
   const { id } = useRouter().query;
@@ -7,7 +12,7 @@ export default function Docs() {
     <div>
       Docs {id}
       <div>
-        <Editor />{" "}
+        <DynamicEditor />{" "}
       </div>{" "}
     </div>
   );
