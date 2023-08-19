@@ -1,6 +1,5 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import { api } from "~/utils/api";
 
 export default function Home() {
