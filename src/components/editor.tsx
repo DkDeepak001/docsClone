@@ -43,7 +43,11 @@ const Editor = () => {
   useEffect(() => {
     if (!socket || !quill) return;
 
-    socket.once("loaded-documents", (data) => console.log("data", data));
+    socket.once("loaded-documents", (document) => {
+      console.log(document);
+      quill.setContents(document.data);
+      quill.enable();
+    });
 
     socket.emit("get-documents", documentId);
   }, [quill, socket, documentId]);
@@ -56,6 +60,7 @@ const Editor = () => {
       socket.emit("send-changes", delta);
     };
     quill.on("text-change", handleTextChange);
+
     return () => {
       quill.off("text-change", handleTextChange);
     };
@@ -89,6 +94,8 @@ const Editor = () => {
       },
     });
     setQuill(q);
+    q?.disable();
+    q?.setText("Loading....");
   }, []);
 
   return (
