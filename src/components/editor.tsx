@@ -1,7 +1,9 @@
 "use client";
 import Quill from "quill";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "quill/dist/quill.snow.css";
+import { type Socket, io } from "socket.io-client";
+import { useRouter } from "next/router";
 
 const toolbarOptions = [
   ["bold", "italic", "underline", "strike"], // toggled buttons
@@ -24,6 +26,55 @@ const toolbarOptions = [
 ];
 
 const Editor = () => {
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [quill, setQuill] = useState<Quill | null>(null);
+
+  const { id: documentId } = useRouter().query;
+
+  useEffect(() => {
+    const s = io("http://localhost:8000");
+    setSocket(s);
+    return () => {
+      s.disconnect();
+    };
+  }, []);
+
+  //loading changes
+  useEffect(() => {
+    if (!socket || !quill) return;
+
+    socket.once("loaded-documents", (data) => console.log("data", data));
+
+    socket.emit("get-documents", documentId);
+  }, [quill, socket, documentId]);
+
+  //sending changes
+  useEffect(() => {
+    if (!socket || !quill) return;
+    const handleTextChange = (delta, old, source) => {
+      if (source !== "user") return;
+      socket.emit("send-changes", delta);
+    };
+    quill.on("text-change", handleTextChange);
+    return () => {
+      quill.off("text-change", handleTextChange);
+    };
+  }, [quill, socket]);
+
+  //receiving changes
+  useEffect(() => {
+    if (!socket || !quill) return;
+
+    const handleTxtChange = (delta) => {
+      quill?.updateContents(delta);
+    };
+    socket?.on("receive-changes", handleTxtChange);
+
+    return () => {
+      quill.off("text-change", handleTxtChange);
+    };
+  }, [quill, socket]);
+
   const wrapperRef = useCallback((wrapper) => {
     if (wrapper === null) return;
     //eslint-disable-next-line
@@ -31,12 +82,13 @@ const Editor = () => {
     const editor = document.createElement("div");
     //eslint-disable-next-line
     wrapper.append(editor);
-    new Quill(editor, {
+    const q = new Quill(editor, {
       theme: "snow",
       modules: {
         toolbar: toolbarOptions,
       },
     });
+    setQuill(q);
   }, []);
 
   return (

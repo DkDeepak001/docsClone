@@ -15,7 +15,13 @@ app.get("/", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  console.log("a user connected");
+  socket.on("get-documents", (documentId) => {
+    socket.emit("loaded-documents", documentId + "loaded");
+    socket.join(documentId);
+    socket.on("send-changes", (delta) => {
+      socket.broadcast.to(documentId).emit("receive-changes", delta);
+    });
+  });
 });
 
 server.listen(8000, () => {
