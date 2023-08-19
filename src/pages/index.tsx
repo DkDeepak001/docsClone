@@ -1,10 +1,12 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { api } from "~/utils/api";
 
 export default function Home() {
   const { data, isLoading } = api.example.hello.useQuery({ text: "from tRPC" });
   const router = useRouter();
+
   if (isLoading) return <div>Loading...</div>;
   return (
     <>
@@ -31,7 +33,7 @@ export default function Home() {
               <div
                 className="flex flex-col items-center justify-center rounded-xl border border-black p-5"
                 key={i}
-                onClick={() => router.push(`/docs/${i}`)}
+                onClick={() => void router.push(`/docs/${i}`)}
               >
                 <h2 className="text-2xl font-bold">tRPC</h2>
                 <p className="mt-3 text-xl">{i}</p>
