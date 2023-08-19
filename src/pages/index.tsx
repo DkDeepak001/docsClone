@@ -1,10 +1,25 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { api } from "~/utils/api";
 
 export default function Home() {
-  const { data, isLoading } = api.example.hello.useQuery({ text: "from tRPC" });
+  const { data: docs, isLoading } = api.docs.all.useQuery();
   const router = useRouter();
+  const [title, setTitle] = useState<string>("Test1");
+  const { mutateAsync: createDocs } = api.docs.create.useMutation({
+    onSuccess: async (data) => {
+      await router.push(`/docs/${data.id}`);
+    },
+  });
+
+  const handleCreateDoc = async () => {
+    try {
+      await createDocs({ title });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   if (isLoading) return <div>Loading...</div>;
   return (
@@ -27,15 +42,22 @@ export default function Home() {
               pages/index.tsx
             </code>
           </p>
-          <div className="mt-3 flex w-3/4 flex-wrap items-center justify-center gap-5 ">
-            {Array.from({ length: 30 }).map((_, i) => (
+          <div className="mt-3 flex w-3/4 cursor-pointer flex-wrap items-center justify-center gap-5">
+            <div
+              className="flex flex-col items-center justify-center rounded-xl border border-black p-5"
+              onClick={() => void handleCreateDoc()}
+            >
+              <h2 className="text-2xl font-bold">+</h2>
+              <p className="mt-3 text-xl">create Docs</p>
+            </div>
+            {docs?.map((_, i) => (
               <div
                 className="flex flex-col items-center justify-center rounded-xl border border-black p-5"
                 key={i}
-                onClick={() => void router.push(`/docs/${i}`)}
+                onClick={() => void router.push(`/docs/${_.id}`)}
               >
-                <h2 className="text-2xl font-bold">tRPC</h2>
-                <p className="mt-3 text-xl">{i}</p>
+                <h2 className="text-2xl font-bold">{_.title}</h2>
+                <p className="mt-3 text-xl">{_.createdAt.toISOString()}</p>
               </div>
             ))}
           </div>

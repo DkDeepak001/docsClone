@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import "quill/dist/quill.snow.css";
 import { type Socket, io } from "socket.io-client";
 import { useRouter } from "next/router";
+import { api } from "~/utils/api";
 
 const toolbarOptions = [
   ["bold", "italic", "underline", "strike"], // toggled buttons
@@ -21,7 +22,6 @@ const toolbarOptions = [
   [{ color: [] }, { background: [] }], // dropdown with defaults from theme
   [{ font: [] }],
   [{ align: [] }],
-
   ["clean"], // remove formatting button
 ];
 
@@ -44,8 +44,12 @@ const Editor = () => {
     if (!socket || !quill) return;
 
     socket.once("loaded-documents", (document) => {
-      console.log(document);
-      quill.setContents(document.data);
+      if (!document?.data?.content) {
+        quill.setContents({ ops: [{ insert: "\n" }] });
+        quill.enable();
+        return;
+      }
+      quill.setContents(JSON.parse(document.data.content));
       quill.enable();
     });
 
@@ -80,11 +84,31 @@ const Editor = () => {
     };
   }, [quill, socket]);
 
+  useEffect(() => {
+    if (!socket || !quill) return;
+    const handleSave = async () => {
+      const data = quill.getContents();
+      if (quill.isEnabled())
+        await saveDocument({
+          id: documentId as string,
+          content: JSON.stringify(data),
+        });
+    };
+
+    const interval = setInterval(handleSave, 2000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [quill, socket, documentId]);
+  const { mutateAsync: saveDocument } = api.docs.save.useMutation();
+
   const wrapperRef = useCallback((wrapper) => {
     if (wrapper === null) return;
     //eslint-disable-next-line
     wrapper.innerHTML = "";
     const editor = document.createElement("div");
+
     //eslint-disable-next-line
     wrapper.append(editor);
     const q = new Quill(editor, {

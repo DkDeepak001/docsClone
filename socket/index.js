@@ -23,7 +23,6 @@ io.on("connection", (socket) => {
     });
 
     const data = await res.json();
-    console.log(data.message);
     socket.emit("loaded-documents", data);
     socket.join(documentId);
     socket.on("send-changes", (delta) => {
