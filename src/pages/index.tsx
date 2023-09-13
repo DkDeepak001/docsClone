@@ -6,7 +6,8 @@ import { api } from "~/utils/api";
 export default function Home() {
   const { data: docs, isLoading } = api.docs.all.useQuery();
   const router = useRouter();
-  const [title, setTitle] = useState<string>("Test1");
+  const [title, setTitle] = useState<string>("");
+  const [showPopup, setShowPopup] = useState<boolean>(false);
   const { mutateAsync: createDocs } = api.docs.create.useMutation({
     onSuccess: async (data) => {
       await router.push(`/docs/${data.id}`);
@@ -45,7 +46,7 @@ export default function Home() {
           <div className="mt-3 flex w-3/4 cursor-pointer flex-wrap items-center justify-center gap-5">
             <div
               className="flex flex-col items-center justify-center rounded-xl border border-black p-5"
-              onClick={() => void handleCreateDoc()}
+              onClick={() => void setShowPopup(true)}
             >
               <h2 className="text-2xl font-bold">+</h2>
               <p className="mt-3 text-xl">create Docs</p>
@@ -62,6 +63,32 @@ export default function Home() {
             ))}
           </div>
         </div>
+        {showPopup && (
+          <div className="fixed left-0 top-0 flex h-full w-full items-center justify-center bg-black bg-opacity-50">
+            <div className="rounded-xl bg-white p-5">
+              <div className="flex flex-col items-center justify-center">
+                <div
+                  className="flex w-full items-center justify-evenly
+                "
+                >
+                  <h2 className="text-2xl font-bold">Create Docs</h2>
+                  <div className="flex items-center justify-center">X</div>
+                </div>
+                <input
+                  className="mt-3 rounded-md border border-black p-2"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+                <button
+                  className="mt-3 rounded-md bg-blue-500 p-2 text-white"
+                  onClick={() => void handleCreateDoc()}
+                >
+                  Create
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </body>
     </>
   );
