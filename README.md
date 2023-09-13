@@ -50,4 +50,3 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - [Prisma](https://prisma.io)
 - [Tailwind CSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
-````
