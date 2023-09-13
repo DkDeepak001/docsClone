@@ -22,32 +22,24 @@ DATABASE_URL="mongodb://localhost:27017/docsClone"
 
 Create a database schema
 
-    ```bash
-    yarn prisma db push
-    ```
-    ```bash
-    yarn prisma generate
-    ```
+```bash
+yarn prisma db push
+yarn prisma generate
+```
 
 Start the Nwxtjs development server:
 
-    ```bash
-    yarn run dev
-    ```
+```bash
+yarn run dev
+```
 
 Start the webSocket server:
 
-    ```bash
-    cd socket
-
-````
 ```bash
-    yarn install
-````
-
-````bash
-    node index.js
-    ```
+cd socket
+yarn install
+node index.js
+```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
