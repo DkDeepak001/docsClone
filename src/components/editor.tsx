@@ -45,6 +45,8 @@ const Editor = () => {
 
     socket.once("loaded-documents", (document) => {
       if (!document?.data?.content) {
+        //eslint-disable-next-line
+        //@ts-ignore
         quill.setContents({ ops: [{ insert: "\n" }] });
         quill.enable();
         return;
@@ -59,6 +61,8 @@ const Editor = () => {
   //sending changes
   useEffect(() => {
     if (!socket || !quill) return;
+    //eslint-disable-next-line
+    //@ts-ignore
     const handleTextChange = (delta, old, source) => {
       if (source !== "user") return;
       socket.emit("send-changes", delta);
@@ -74,6 +78,8 @@ const Editor = () => {
   useEffect(() => {
     if (!socket || !quill) return;
 
+    //eslint-disable-next-line
+    //@ts-ignore
     const handleTxtChange = (delta) => {
       quill?.updateContents(delta);
     };
@@ -100,9 +106,11 @@ const Editor = () => {
     return () => {
       clearInterval(interval);
     };
+    //eslint-disable-next-line
   }, [quill, socket, documentId]);
   const { mutateAsync: saveDocument } = api.docs.save.useMutation();
-
+  //eslint-disable-next-line
+  //@ts-ignore
   const wrapperRef = useCallback((wrapper) => {
     if (wrapper === null) return;
     //eslint-disable-next-line
