@@ -6,11 +6,11 @@ const { Server } = require("socket.io");
 require("dotenv").config();
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "http://app:3000",
   },
 });
 
-const NEXT_URL = "http://localhost:3000/api/getDocs";
+const NEXT_URL = "http://app:3000/api/getDocs";
 
 io.on("connection", (socket) => {
   socket.on("get-documents", async (documentId) => {

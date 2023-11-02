@@ -32,7 +32,7 @@ const Editor = () => {
   const { id: documentId } = useRouter().query;
 
   useEffect(() => {
-    const s = io(process.env.WEBSOCKET_URL ?? "http://localhost:8000");
+    const s = io("http://socket:8000");
     setSocket(s);
     return () => {
       s.disconnect();
