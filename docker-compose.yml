@@ -15,6 +15,13 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
+    depends_on:
+      - app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://socket:8000/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     networks:
       - mynetwork
 

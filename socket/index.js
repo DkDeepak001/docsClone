@@ -5,12 +5,15 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 require("dotenv").config();
 const io = new Server(server, {
-  cors: {
-    origin: "http://app:3000",
-  },
+  cors: "http://app:3000/",
 });
 
 const NEXT_URL = "http://app:3000/api/getDocs";
+
+// Health check route
+app.get("/healthcheck", (req, res) => {
+  res.status(200).json({ message: "Server is healthy" });
+});
 
 io.on("connection", (socket) => {
   socket.on("get-documents", async (documentId) => {
