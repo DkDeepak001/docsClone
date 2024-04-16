@@ -108,7 +108,9 @@ const Editor = () => {
     };
     //eslint-disable-next-line
   }, [quill, socket, documentId]);
+
   const { mutateAsync: saveDocument } = api.docs.save.useMutation();
+
   //eslint-disable-next-line
   //@ts-ignore
   const wrapperRef = useCallback((wrapper) => {

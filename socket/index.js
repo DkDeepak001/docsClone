@@ -11,7 +11,7 @@ const io = new Server(server, {
 const NEXT_URL = "http://app:3000/api/getDocs";
 
 // Health check route
-app.get("/healthcheck", (req, res) => {
+app.get("/health", (req, res) => {
   res.status(200).json({ message: "Server is healthy" });
 });
 
