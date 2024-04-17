@@ -2,6 +2,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { Header } from "~/components/header";
+import { Loader } from "~/components/loader";
 import { ModeToggle } from "~/components/ui/themeToggle";
 import { api } from "~/utils/api";
 
@@ -24,7 +25,7 @@ export default function Home() {
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <div><Loader /></div>;
   return (
     <div className="bg-background">
       <Header />
