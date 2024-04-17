@@ -4,11 +4,12 @@ const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 require("dotenv").config();
+
 const io = new Server(server, {
   cors: "http://app:3000/",
 });
 
-const NEXT_URL = "http://app:3000/api/getDocs";
+const NEXT_URL = "http://localhost:3000/api/getDocs";
 
 // Health check route
 app.get("/health", (req, res) => {
@@ -16,7 +17,9 @@ app.get("/health", (req, res) => {
 });
 
 io.on("connection", (socket) => {
+
   socket.on("get-documents", async (documentId) => {
+
     const res = await fetch(NEXT_URL, {
       method: "POST",
       headers: {
@@ -26,6 +29,7 @@ io.on("connection", (socket) => {
     });
 
     const data = await res.json();
+
     socket.emit("loaded-documents", data);
     socket.join(documentId);
     socket.on("send-changes", (delta) => {

@@ -56,9 +56,7 @@ export default function Home() {
                   key={i}
                   onClick={() => void router.push(`/docs/${_.id}`)}
                 >
-                  <div className="h-5/6 border-b border-b-foreground/20 w-full flex items-start justify-start p-3 text-[8px]" >
-                    {deltaToHTML(_.content)}
-                  </div>
+                  <div className="h-5/6 border-b border-b-foreground/20 w-full  p-3 text-[8px]" dangerouslySetInnerHTML={{ __html: deltaToHTML(_.content) }}></div>
                   <p className="h-1/6 pt-3 text-lg font-semibold">{_.title}</p>
                 </div>
               )
@@ -101,12 +99,15 @@ export default function Home() {
 const deltaToHTML = (data: string) => {
   if (!data) return 'Empty Document'
   const delta = JSON.parse(data)
+  console.log(delta)
   return delta.ops?.map(function(op) {
-    if (typeof op.insert !== 'string' || op.insert === "\n") return 'Empty Document';
-    let html = op.insert;
+    if (typeof op.insert !== 'string' || delta.ops.length === 1 && op.insert === "\n") return 'Empty Document';
+    let html = op.insert.replace(/\n/g, '<br>')
+    console.log(op, "++++++++++")
     if (op.attributes && op.attributes.bold) {
       html = '<strong>' + html + '</strong>';
     }
+    console.log(html, "-----------")
     return html;
   }).join('');
 };
