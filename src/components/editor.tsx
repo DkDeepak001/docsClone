@@ -5,31 +5,17 @@ import "quill/dist/quill.snow.css";
 import { type Socket, io } from "socket.io-client";
 import { useRouter } from "next/router";
 import { api } from "~/utils/api";
+import { toolbarOptions } from "~/utils/toolbar";
 
-const toolbarOptions = [
-  ["bold", "italic", "underline", "strike"], // toggled buttons
-  ["blockquote", "code-block"],
 
-  [{ header: 1 }, { header: 2 }], // custom button values
-  [{ list: "ordered" }, { list: "bullet" }],
-  [{ script: "sub" }, { script: "super" }], // superscript/subscript
-  [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
-  [{ direction: "rtl" }], // text direction
-
-  [{ size: ["small", false, "large", "huge"] }], // custom dropdown
-  [{ header: [1, 2, 3, 4, 5, 6, false] }],
-
-  [{ color: [] }, { background: [] }], // dropdown with defaults from theme
-  [{ font: [] }],
-  [{ align: [] }],
-  ["clean"], // remove formatting button
-];
 
 const Editor = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [quill, setQuill] = useState<Quill | null>(null);
 
   const { id: documentId } = useRouter().query;
+  const { mutateAsync: saveDocument } = api.docs.save.useMutation();
+
 
   useEffect(() => {
     const s = io("http://localhost:8000/");
@@ -39,10 +25,11 @@ const Editor = () => {
     };
   }, []);
 
+
   //loading changes
   useEffect(() => {
+    console.log("loading changes=================")
     if (!socket || !quill) return;
-
     socket.once("loaded-documents", (document) => {
       if (!document?.data?.content) {
         //eslint-disable-next-line
@@ -59,8 +46,10 @@ const Editor = () => {
     socket.emit("get-documents", documentId);
   }, [quill, socket, documentId]);
 
+
   //sending changes
   useEffect(() => {
+    console.log("sending changes=================")
     if (!socket || !quill) return;
     //eslint-disable-next-line
     //@ts-ignore
@@ -75,10 +64,12 @@ const Editor = () => {
     };
   }, [quill, socket]);
 
+
+
   //receiving changes
   useEffect(() => {
+    console.log("reciving changes=================")
     if (!socket || !quill) return;
-
     //eslint-disable-next-line
     //@ts-ignore
     const handleTxtChange = (delta) => {
@@ -110,7 +101,6 @@ const Editor = () => {
     //eslint-disable-next-line
   }, [quill, socket, documentId]);
 
-  const { mutateAsync: saveDocument } = api.docs.save.useMutation();
 
   //eslint-disable-next-line
   //@ts-ignore

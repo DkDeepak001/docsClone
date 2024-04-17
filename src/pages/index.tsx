@@ -10,6 +10,7 @@ import { Input } from "~/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 import { api } from "~/utils/api";
 import { toast } from "~/components/ui/use-toast";
+import { deltaToHTML } from "~/utils/deltaToHtml";
 
 const FilterValues = ["A-Z", "Z-A", "newest", "oldest", "latest"] as const;
 export type FilterType = typeof FilterValues[number];
@@ -67,7 +68,7 @@ export default function Home() {
           />
         </div>
 
-
+        {/*Card*/}
         <div className="flex  flex-col items-center justify-center py-2  h-full">
           <div className="mt-3 flex  flex-wrap items-center justify-self-start gap-y-5 gap-x-4 h-80  w-full ">
             <div
@@ -98,6 +99,9 @@ export default function Home() {
             })}
           </div>
         </div>
+
+
+        {/*POPUPS*/}
         <Dialog onOpenChange={() => setShowPopup(false)} open={showPopup}>
           <DialogContent>
             <DialogHeader>
@@ -113,19 +117,4 @@ export default function Home() {
     </div >
   );
 }
-
-const deltaToHTML = (data: string) => {
-  if (!data) return 'Empty Document'
-  const delta = JSON.parse(data)
-  //@ts-ignore
-  return delta.ops?.map(function(op) {
-    if (typeof op.insert !== 'string' || delta.ops.length === 1 && op.insert === "\n") return 'Empty Document';
-    let html = op.insert.replace(/\n/g, '<br>')
-    if (op.attributes && op.attributes.bold) {
-      html = '<strong>' + html + '</strong>';
-    }
-    return html;
-  }).join('');
-};
-
 
