@@ -28,62 +28,36 @@ const Editor = () => {
 
   //loading changes
   useEffect(() => {
-    console.log("loading changes=================")
     if (!socket || !quill) return;
+
+
+    //set up Quill and load the content of we have 
     socket.once("loaded-documents", (document) => {
       if (!document?.data?.content) {
         //eslint-disable-next-line
         //@ts-ignore
         quill.setContents({ ops: [{ insert: "\n" }] });
         quill.enable();
-
         return;
       }
       quill.setContents(JSON.parse(document.data.content));
       quill.enable();
     });
 
-    socket.emit("get-documents", documentId);
-  }, [quill, socket, documentId]);
+    //eslint-disable-next-line
+    //@ts-ignore
+    const handleTxtChange = (delta) => {
+      quill?.updateContents(delta);
+    };
 
-
-  //sending changes
-  useEffect(() => {
-    console.log("sending changes=================")
-    if (!socket || !quill) return;
     //eslint-disable-next-line
     //@ts-ignore
     const handleTextChange = (delta, old, source) => {
       if (source !== "user") return;
       socket.emit("send-changes", delta);
     };
-    quill.on("text-change", handleTextChange);
 
-    return () => {
-      quill.off("text-change", handleTextChange);
-    };
-  }, [quill, socket]);
-
-
-
-  //receiving changes
-  useEffect(() => {
-    console.log("reciving changes=================")
-    if (!socket || !quill) return;
-    //eslint-disable-next-line
-    //@ts-ignore
-    const handleTxtChange = (delta) => {
-      quill?.updateContents(delta);
-    };
-    socket?.on("receive-changes", handleTxtChange);
-
-    return () => {
-      quill.off("text-change", handleTxtChange);
-    };
-  }, [quill, socket]);
-
-  useEffect(() => {
-    if (!socket || !quill) return;
+    //save the content in db
     const handleSave = async () => {
       const data = quill.getContents();
       if (quill.isEnabled())
@@ -93,13 +67,24 @@ const Editor = () => {
         });
     };
 
-    const interval = setInterval(handleSave, 2000);
+
+
+    quill.on("text-change", handleTextChange);
+
+    socket?.on("receive-changes", handleTxtChange);
+    socket.emit("get-documents", documentId);
+
+    //debouncing save the document
+    const interval = setInterval(handleSave, 10000);
 
     return () => {
       clearInterval(interval);
+      quill.off("text-change", handleTxtChange);
+      quill.off("text-change", handleTextChange);
     };
-    //eslint-disable-next-line
+
   }, [quill, socket, documentId]);
+
 
 
   //eslint-disable-next-line
@@ -123,9 +108,11 @@ const Editor = () => {
     q?.setText("Loading....");
   }, []);
 
+
+
   return (
-    <div className="flex flex-col items-center">
-      <div ref={wrapperRef} className="w-3/4 "></div>
+    <div className="flex flex-col flex-1 h-screen items-center justify-center py-5 ">
+      <div ref={wrapperRef} className="xl:w-3/5 md:w-[95%] flex flex-1 flex-col "></div>
     </div>
   );
 };
