@@ -11,13 +11,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "~/components/u
 import { api } from "~/utils/api";
 import { toast } from "~/components/ui/use-toast";
 
+const FilterValues = ["A-Z", "Z-A", "newest", "oldest", "latest"] as const;
+export type FilterType = typeof FilterValues[number];
+
+const filters: FilterType[] = [...FilterValues];
+
 export default function Home() {
   const router = useRouter();
   const [title, setTitle] = useState<string>("");
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [q, setQ] = useState<string>("")
+  const [selectedFilter, setFilters] = useState<FilterType>("latest")
 
-  const { data: docs, isInitialLoading } = api.docs.all.useQuery({ q }, {
+  const { data: docs, isInitialLoading } = api.docs.all.useQuery({ q, filter: selectedFilter }, {
     keepPreviousData: true
   });
   const { mutateAsync: createDocs, isLoading: isUploading } = api.docs.create.useMutation({
@@ -55,7 +61,10 @@ export default function Home() {
       <div className="w-4/5 my-5">
         <div className="flex flex-row justify-between  py-5 ">
           <h3 className="text-base font-semibold">Recent Documenst</h3>
-          <Filter />
+          <Filter
+            setFilters={(filter: FilterType) => setFilters(filter)}
+            filters={filters}
+          />
         </div>
 
 

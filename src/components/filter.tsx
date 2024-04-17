@@ -1,14 +1,19 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
+import { FilterType } from "~/pages";
 
-export const Filter = () => {
+type FilterProps = {
+  filters: FilterType[]
+  setFilters: (filter: FilterProps['filters'][number]) => void
+}
+
+
+
+
+export const Filter = ({ filters, setFilters }: FilterProps) => {
   return (<DropdownMenu>
     <DropdownMenuTrigger className="border border-foreground/20 px-4 py-2 rounded-sm font-semibold">sort by</DropdownMenuTrigger>
     <DropdownMenuContent>
-      <DropdownMenuItem>last modified</DropdownMenuItem>
-      <DropdownMenuItem> A - Z</DropdownMenuItem>
-      <DropdownMenuItem> Z - A</DropdownMenuItem>
-      <DropdownMenuItem>Newset</DropdownMenuItem>
-      <DropdownMenuItem>Oldest</DropdownMenuItem>
+      {filters.map(f => <DropdownMenuItem onClick={() => setFilters(f)}>{f}</DropdownMenuItem>)}
     </DropdownMenuContent>
   </DropdownMenu>
   )

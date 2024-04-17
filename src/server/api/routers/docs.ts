@@ -3,14 +3,21 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 export const docsRouter = createTRPCRouter({
   all: publicProcedure.input(z.object({
-    q: z.string().optional()
+    q: z.string().optional(),
+    filter: z.enum(["A-Z", "Z-A", "newest", "oldest", "latest"])
   })).query(async ({ ctx, input }) => {
     return await ctx.prisma.docs.findMany({
       where: {
         title: input.q ? {
           contains: input.q.toLowerCase()
         } : undefined
-      }
+      }, orderBy:
+        input.filter === "A-Z" ? { title: "asc" } :
+          input.filter === "Z-A" ? { title: "desc" } :
+            input.filter === "newest" ? { createdAt: "desc" } :
+              input.filter === "oldest" ? { createdAt: "asc" } :
+                { updatedAt: 'desc' }
+
     });
   }),
   create: publicProcedure
