@@ -1,11 +1,15 @@
-import { Plus, SquarePlus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useRouter } from "next/router";
-import Quill from "quill";
 import { useState } from "react";
 import { Filter } from "~/components/filter";
 import { Header } from "~/components/header";
 import { Loader } from "~/components/loader";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 import { api } from "~/utils/api";
+import { toast } from "~/components/ui/use-toast";
 
 export default function Home() {
   const { data: docs, isLoading } = api.docs.all.useQuery();
@@ -13,7 +17,7 @@ export default function Home() {
   const router = useRouter();
   const [title, setTitle] = useState<string>("");
   const [showPopup, setShowPopup] = useState<boolean>(false);
-  const { mutateAsync: createDocs } = api.docs.create.useMutation({
+  const { mutateAsync: createDocs, isLoading: isUploading } = api.docs.create.useMutation({
     onSuccess: async (data) => {
       await router.push(`/docs/${data.id}`);
     },
@@ -21,7 +25,21 @@ export default function Home() {
 
   const handleCreateDoc = async () => {
     try {
-      await createDocs({ title });
+      if (title === "") {
+        return toast({
+          title: "Title Required",
+          description: "Please provide a title for the document.",
+          variant: "destructive"
+        });
+      } else if (title.length >= 16) {
+        return toast({
+          title: "Title Too Long",
+          description: "The title should not be more than 15 characters ",
+          variant: "destructive"
+        });
+      } else {
+        await createDocs({ title })
+      }
     } catch (error) {
       console.log(error);
     }
@@ -56,41 +74,25 @@ export default function Home() {
                   key={i}
                   onClick={() => void router.push(`/docs/${_.id}`)}
                 >
-                  <div className="h-5/6 border-b border-b-foreground/20 w-full  p-3 text-[8px]" dangerouslySetInnerHTML={{ __html: deltaToHTML(_.content) }}></div>
+                  <div className="h-5/6 border-b border-b-foreground/20 w-full p-3  text-[8px] overflow-hidden whitespace-pre-wrap max-w-full " dangerouslySetInnerHTML={{ __html: deltaToHTML(_.content) }}></div>
+
                   <p className="h-1/6 pt-3 text-lg font-semibold">{_.title}</p>
                 </div>
               )
             })}
           </div>
         </div>
-        {
-          showPopup && (
-            <div className="fixed left-0 top-0 flex h-full w-full items-center justify-center bg-black bg-opacity-50">
-              <div className="rounded-xl bg-white p-5">
-                <div className="flex flex-col items-center justify-center">
-                  <div
-                    className="flex w-full items-center justify-evenly
-                "
-                  >
-                    <h2 className="text-2xl font-bold">Create Docs</h2>
-                    <div className="flex items-center justify-center">X</div>
-                  </div>
-                  <input
-                    className="mt-3 rounded-md border border-black p-2"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                  />
-                  <button
-                    className="mt-3 rounded-md bg-blue-500 p-2 text-white"
-                    onClick={() => void handleCreateDoc()}
-                  >
-                    Create
-                  </button>
-                </div>
-              </div>
-            </div>
-          )
-        }
+        <Dialog onOpenChange={() => setShowPopup(false)} open={showPopup}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create New Document</DialogTitle>
+            </DialogHeader>
+            <Input value={title} onChange={(e) => setTitle(e.target.value)} className="my-2" placeholder="Enter a Title" />
+            <Button onClick={handleCreateDoc} variant="default" color="primary" disabled={isUploading}>
+              Create
+            </Button>
+          </DialogContent>
+        </Dialog>
       </div>
     </div >
   );

@@ -3,6 +3,7 @@ import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import Head from "next/head";
 import { ThemeProvider } from "~/utils/theme-provider";
+import { Toaster } from "~/components/ui/toaster";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
@@ -19,6 +20,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         disableTransitionOnChange
       >
         <Component {...pageProps} />
+        <Toaster />
       </ThemeProvider>
     </>
   );
