@@ -49,6 +49,7 @@ const Editor = () => {
         //@ts-ignore
         quill.setContents({ ops: [{ insert: "\n" }] });
         quill.enable();
+
         return;
       }
       quill.setContents(JSON.parse(document.data.content));

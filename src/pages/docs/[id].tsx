@@ -7,7 +7,7 @@ const DynamicEditor = dynamic(() => import("~/components/editor"), {
 
 export default function Docs() {
   return (
-    <div className="max-h-full min-h-screen bg-gray-50">
+    <div className="max-h-full min-h-screen bg-background">
       <DynamicEditor />
     </div>
   );
