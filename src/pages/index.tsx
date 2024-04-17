@@ -59,24 +59,28 @@ export default function Home() {
         <div className="flex  flex-col items-center justify-center py-2  h-full">
           <div className="mt-3 flex  flex-wrap items-center justify-self-start gap-y-5 gap-x-4 h-80  w-full ">
             <div
-              className="flex flex-col w-60 items-center justify-center rounded-xl border border-foreground/50  h-full cursor-pointer"
+              className="flex flex-col w-60 justify-center rounded-xl border border-foreground/50  h-full cursor-pointer"
               onClick={() => void setShowPopup(true)}
             >
-              <div className="h-5/6 border-b border-b-foreground/20 w-full flex items-center justify-center">
+              <div className="h-4/5 border-b border-b-foreground/20 w-full flex items-center justify-center">
                 <Plus size={100} />
               </div>
-              <p className="h-1/6 pt-3 text-lg font-semibold">New Document</p>
+              <div className="h-1/5 flex flex-col justify-center items-start px-5 py-1">
+                <p className=" text-base font-semibold">New Document</p>
+              </div>
             </div>
             {docs?.map((_, i) => {
               return (
                 <div
-                  className="flex flex-col w-60 items-center justify-center rounded-xl border border-foreground/50 h-full cursor-pointer"
+                  className="flex flex-col w-60  justify-center rounded-xl border border-foreground/50 h-full cursor-pointer"
                   key={i}
                   onClick={() => void router.push(`/docs/${_.id}`)}
                 >
-                  <div className="h-5/6 border-b border-b-foreground/20 w-full p-3  text-[8px] overflow-hidden whitespace-pre-wrap max-w-full " dangerouslySetInnerHTML={{ __html: deltaToHTML(_.content) }}></div>
-
-                  <p className="h-1/6 pt-3 text-lg font-semibold">{_.title}</p>
+                  <div className="h-4/5 border-b border-b-foreground/20 w-full p-3  text-[8px] overflow-hidden whitespace-pre-wrap max-w-full " dangerouslySetInnerHTML={{ __html: deltaToHTML(_.content) }}></div>
+                  <div className=" h-1/5 flex flex-col items-start px-5 py-1 justify-evenly overflow-hidden ">
+                    <p className=" text-sm font-semibold ">{_.title}</p>
+                    <p className="text-xs">{_.createdAt.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })}</p>
+                  </div>
                 </div>
               )
             })}
@@ -101,15 +105,13 @@ export default function Home() {
 const deltaToHTML = (data: string) => {
   if (!data) return 'Empty Document'
   const delta = JSON.parse(data)
-  console.log(delta)
+  //@ts-ignore
   return delta.ops?.map(function(op) {
     if (typeof op.insert !== 'string' || delta.ops.length === 1 && op.insert === "\n") return 'Empty Document';
     let html = op.insert.replace(/\n/g, '<br>')
-    console.log(op, "++++++++++")
     if (op.attributes && op.attributes.bold) {
       html = '<strong>' + html + '</strong>';
     }
-    console.log(html, "-----------")
     return html;
   }).join('');
 };
