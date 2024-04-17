@@ -12,11 +12,14 @@ import { api } from "~/utils/api";
 import { toast } from "~/components/ui/use-toast";
 
 export default function Home() {
-  const { data: docs, isLoading } = api.docs.all.useQuery();
-
   const router = useRouter();
   const [title, setTitle] = useState<string>("");
   const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [q, setQ] = useState<string>("")
+
+  const { data: docs, isInitialLoading } = api.docs.all.useQuery({ q }, {
+    keepPreviousData: true
+  });
   const { mutateAsync: createDocs, isLoading: isUploading } = api.docs.create.useMutation({
     onSuccess: async (data) => {
       await router.push(`/docs/${data.id}`);
@@ -45,10 +48,10 @@ export default function Home() {
     }
   };
 
-  if (isLoading) return <div><Loader /></div>;
+  if (isInitialLoading) return <div><Loader /></div>;
   return (
     <div className="bg-background flex flex-col items-center ">
-      <Header />
+      <Header q={q} setQ={(q) => setQ(q)} />
       <div className="w-4/5 my-5">
         <div className="flex flex-row justify-between  py-5 ">
           <h3 className="text-base font-semibold">Recent Documenst</h3>

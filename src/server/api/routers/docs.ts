@@ -2,8 +2,16 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 export const docsRouter = createTRPCRouter({
-  all: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.docs.findMany();
+  all: publicProcedure.input(z.object({
+    q: z.string().optional()
+  })).query(async ({ ctx, input }) => {
+    return await ctx.prisma.docs.findMany({
+      where: {
+        title: input.q ? {
+          contains: input.q.toLowerCase()
+        } : undefined
+      }
+    });
   }),
   create: publicProcedure
     .input(
@@ -14,7 +22,7 @@ export const docsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       return await ctx.prisma.docs.create({
         data: {
-          title: input.title,
+          title: input.title.toLowerCase(),
           content: "",
         },
       });

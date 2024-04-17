@@ -3,8 +3,13 @@ import Logo from '../../public/icon.png'
 import Image from "next/image"
 import { useTheme } from "next-themes"
 import { Search } from "lucide-react"
+type HeaderProps = {
+  q: string
+  setQ: (q: HeaderProps['q']) => void
+}
 
-export const Header = () => {
+
+export const Header = ({ q, setQ }: HeaderProps) => {
   const { theme } = useTheme()
   return (
     <div className="w-full h-20 flex flex-row items-center justify-between border-b-[1px] border-b-foreground/20 px-20">
@@ -14,7 +19,7 @@ export const Header = () => {
       </div>
       <div className={`w-2/4 p-2 rounded-lg flex flex-row items-center border border-foreground/75 ${theme === "dark" ? "bg-zinc-800" : "bg-zinc-100"}`} >
         <Search height={20} />
-        <input className={'w-full p-2 rounded-lg bg-transparent  !outline-none'} placeholder="Search" />
+        <input className={'w-full p-2 rounded-lg bg-transparent  !outline-none'} placeholder="Search" value={q} onChange={(e) => setQ(e.target.value)} />
       </div>
       <ModeToggle />
     </div>
