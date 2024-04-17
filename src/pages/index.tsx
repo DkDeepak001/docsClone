@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { Header } from "~/components/header";
 import { Loader } from "~/components/loader";
-import { ModeToggle } from "~/components/ui/themeToggle";
 import { api } from "~/utils/api";
 
 export default function Home() {
