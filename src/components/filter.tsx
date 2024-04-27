@@ -10,7 +10,7 @@ export const Filter = ({ filters, setFilters }: FilterProps) => {
   return (<DropdownMenu>
     <DropdownMenuTrigger className="border border-foreground/20 px-4 py-2 rounded-sm font-semibold">sort by</DropdownMenuTrigger>
     <DropdownMenuContent>
-      {filters.map(f => <DropdownMenuItem onClick={() => setFilters(f)}>{f}</DropdownMenuItem>)}
+      {filters.map(f => <DropdownMenuItem key={f} onClick={() => setFilters(f)}>{f}</DropdownMenuItem>)}
     </DropdownMenuContent>
   </DropdownMenu>
   )

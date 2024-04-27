@@ -19,6 +19,13 @@ const config = {
     "@typescript-eslint/no-unsafe-member-access": "off",
     "@typescript-eslint/no-unsafe-argument": "off",
     "@typescript-eslint/no-misused-promises": "off",
+    "@typescript-eslint/no-empty-interface": "off",
+    "@typescript-eslint/no-non-null-asserted-optional-chain": "off",
+    "@typescript-eslint/no-unsafe-assignment": "warn",
+    "@typescript-eslint/ban-ts-comment": "warn",
+    "@typescript-eslint/no-unsafe-return": "warn",
+    "@typescript-eslint/prefer-optional-chain": "warn",
+    "@typescript-eslint/no-unsafe-call": "warn",
     "@typescript-eslint/consistent-type-imports": [
       "warn",
       {
