@@ -2,6 +2,14 @@
 
 ## Getting Started
 
+### Using Docker 
+
+```
+docker compose up
+```
+
+
+### Manual Installation
 First, Clone the repo:
 
 ```bash
@@ -27,7 +35,7 @@ yarn prisma db push
 yarn prisma generate
 ```
 
-Start the Nwxtjs development server:
+Start the Nextjs development server:
 
 ```bash
 yarn run dev
