@@ -18,7 +18,7 @@ const Editor = () => {
 
 
   useEffect(() => {
-    const s = io(`${process.env.NEXT_PUBLIC_WEBSOCKET_URL}`);
+    const s = io(`https://api.docs.dkdeepak001.com`);
     setSocket(s);
     return () => {
       s.disconnect();
